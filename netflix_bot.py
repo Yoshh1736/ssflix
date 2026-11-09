@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
-# netflix_bot.py - STAIN Netflix Premium Multi-Tool Cloud Bot (Fixed Edition)
+#!/usr/init/env python3
+# netflix_bot.py - STAIN Netflix Premium Multi-Tool Cloud Bot (Stable Final)
 import os
 import random
 import time
@@ -83,7 +83,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if update.message:
         await update.message.reply_text(welcome_text, reply_markup=reply_markup)
     elif update.callback_query:
-        await update.callback_query.message.edit_text(welcome_text, reply_markup=reply_markup)
+        await update.callback_query.message.reply_text(welcome_text, reply_markup=reply_markup)
 
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
@@ -165,8 +165,13 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         
-        # Edit message cleanly without Markdown formatting crashes
-        await query.message.edit_text(result_text, reply_markup=reply_markup, disable_web_page_preview=True)
+        # Send the generated account card as a brand new message
+        await context.bot.send_message(
+            chat_id=query.message.chat_id,
+            text=result_text,
+            reply_markup=reply_markup,
+            disable_web_page_preview=True
+        )
 
         # Prepare and send the .txt file attachment with verification buttons
         file_content = (
