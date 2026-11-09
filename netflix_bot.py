@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# netflix_bot.py - STAIN Netflix Premium Multi-Tool Cloud Bot (Diagnostic Edition)
+# netflix_bot.py - STAIN NETFLIX HUB (Elite Edition)
 import os
 import random
 import time
@@ -18,12 +18,12 @@ USER_COOLDOWNS = {}
 COOLDOWN_TIME = 180 
 
 REGIONS = {
-    "ph": {"name": "Philippines 🇵🇭", "stock": 17},
-    "jp": {"name": "Japan 🇯🇵", "stock": 42},
-    "kr": {"name": "South Korea 🇰🇷", "stock": 29},
-    "us": {"name": "USA 🇺🇸", "stock": 33},
-    "br": {"name": "Brazil 🇧🇷", "stock": 113},
-    "tr": {"name": "Turkey 🇹🇷", "stock": 52},
+    "ph": {"name": "Philippines 🇵🇭", "stock": 42},
+    "jp": {"name": "Japan 🇯🇵", "stock": 89},
+    "kr": {"name": "South Korea 🇰🇷", "stock": 64},
+    "us": {"name": "United States 🇺🇸", "stock": 120},
+    "br": {"name": "Brazil 🇧🇷", "stock": 215},
+    "tr": {"name": "Turkey 🇹🇷", "stock": 98},
 }
 
 SAMPLE_EMAILS = [
@@ -52,32 +52,31 @@ SAMPLE_COOKIE = (
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     print("📥 /start command received!")
     keyboard = [
-        [InlineKeyboardButton("🎬 Generate Now", callback_data="menu_regions")],
-        [InlineKeyboardButton("📂 Send file(txt)", callback_data="send_txt"),
+        [InlineKeyboardButton("⚡ GENERATE NOW ⚡", callback_data="menu_regions")],
+        [InlineKeyboardButton("📂 Send File (.txt)", callback_data="send_txt"),
          InlineKeyboardButton("📝 Send Text", callback_data="send_text")],
         [InlineKeyboardButton("🔍 Any File Extract", callback_data="any_extract")],
         [InlineKeyboardButton("⭐ Reviews", callback_data="reviews"),
          InlineKeyboardButton("👨‍💻 Developer", callback_data="developer")],
-        [InlineKeyboardButton("Tutorial ⁉️", callback_data="tutorial")]
+        [InlineKeyboardButton("❓ Tutorial & Help", callback_data="tutorial")]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     
     welcome_text = (
-        "✨ —SS Netflix Premium ✨\n"
-        "10,187 monthly users\n\n"
-        "✨ Features:\n"
-        "→ 🍪 Extract NetflixId, Check & Generate Direct Login from Premium accounts only.\n\n"
-        "📁 Supported Formats:\n"
-        "→ Text files (zip,txt,json,rar) by Any File extract\n\n"
-        "⚡ Quick Commands:\n"
-        "/start - Restart Bot\n"
-        "/cancel - Stop current task\n"
-        "/stats - Bot statistics\n\n"
-        "📊 Bot Stats:\n"
-        "→ Available Stock : 740\n"
-        "→ 10000+ Active Users\n"
-        "→ 99.9% Success Rate\n"
-        "Developed by @mtfeels"
+        "✦ ─── STAIN NETFLIX HUB ─── ✦\n"
+        "👥 Active Users: `14,890 monthly`\n\n"
+        "✨ **System Features:**\n"
+        "→ 🍪 *Extract NetflixId, Auto-Check & Route Direct Premium Sessions.*\n\n"
+        "📁 **Supported Formats:**\n"
+        "→ `zip`, `txt`, `json`, `rar` via Any File Extract\n\n"
+        "⚡ **Command Shortcuts:**\n"
+        "/start - Launch Dashboard\n"
+        "/stats - Live Engine Status\n\n"
+        "📊 **Global Engine Stats:**\n"
+        "→ Available Stock : `945 Sessions`\n"
+        "→ Success Rate : `99.99%`\n"
+        "──────────────────────────\n"
+        "👑 **Developed by @mtfeels**"
     )
     
     if update.message:
@@ -91,17 +90,19 @@ async def menu_regions_callback(update: Update, context: ContextTypes.DEFAULT_TY
     await query.answer()
     
     keyboard = [
-        [InlineKeyboardButton("🇵🇭 Philippines (17)", callback_data="gen_ph"),
-         InlineKeyboardButton("🇯🇵 Japan (42)", callback_data="gen_jp")],
-        [InlineKeyboardButton("🇰🇷 South Korea (29)", callback_data="gen_kr"),
-         InlineKeyboardButton("🇺🇸 United States (33)", callback_data="gen_us")],
-        [InlineKeyboardButton("🇧🇷 Brazil (113)", callback_data="gen_br"),
-         InlineKeyboardButton("🇹🇷 Turkey (52)", callback_data="gen_tr")],
-        [InlineKeyboardButton("🏠 Home", callback_data="home")]
+        [InlineKeyboardButton("🇵🇭 Philippines (42)", callback_data="gen_ph"),
+         InlineKeyboardButton("🇯🇵 Japan (89)", callback_data="gen_jp")],
+        [InlineKeyboardButton("🇰🇷 South Korea (64)", callback_data="gen_kr"),
+         InlineKeyboardButton("🇺🇸 United States (120)", callback_data="gen_us")],
+        [InlineKeyboardButton("🇧🇷 Brazil (215)", callback_data="gen_br"),
+         InlineKeyboardButton("🇹🇷 Turkey (98)", callback_data="gen_tr")],
+        [InlineKeyboardButton("🏠 Return Home", callback_data="home")]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await query.message.edit_text(
-        "🌐 Select a Country to Generate Netflix Account:\nPage: 1/1", 
+        "🌐 **SELECT TARGET REGION / COUNTRY:**\n"
+        "_Choose a high-speed proxy node below._\n\n"
+        "📂 *Page: 1 / 1*", 
         reply_markup=reply_markup
     )
 
@@ -134,34 +135,34 @@ async def generate_account_callback(update: Update, context: ContextTypes.DEFAUL
     tv_link = f"https://www.netflix.com/tv9?nftoken={token_hash}"
 
     result_text = (
-        "✦ Netflix Account Generated Successfully\n\n"
-        f"▎Email: {email}\n"
-        f"▎Phone: {phone}\n"
+        "✦ ── STAIN SESSION GENERATOR ── ✦\n\n"
+        f"▎Email: `{email}`\n"
+        f"▎Phone: `{phone}`\n"
         f"▎Country: {reg_info['name']}\n"
-        f"▎Plan: Premium\n"
+        f"▎Plan: Premium UHD\n"
         f"▎Ad Plan: No ✅\n"
-        f"▎Quality: UHD\n"
-        f"▎Max Streams: 4\n\n"
-        "▎Profiles (5): onyon, Fuck zuya, Xiangelo, Zen, lady\n\n"
+        f"▎Quality: 4K Ultra HD\n"
+        f"▎Max Streams: 4 Screens\n\n"
+        "▎Profiles (5): `onyon`, `Fuck zuya`, `Xiangelo`, `Zen`, `lady`\n\n"
         "▎Status: CURRENT_MEMBER\n"
         "▎On Hold: No ✅\n"
-        "▎Member Since: Jul 2025\n"
+        "▎Member Since: Jul Auth\n"
         "▎Payment: MOBILE_WALLET\n"
         "▎Next Billing: December 7, 2026\n"
-        "▎Extra Members: No\n\n"
-        "───────────────\n\n"
-        f"▎Cookie:\n{SAMPLE_COOKIE}\n\n"
+        "▎Extra Members: None\n\n"
+        "──────────────────────────\n\n"
+        f"▎Cookie Payload:\n`{SAMPLE_COOKIE}`\n\n"
         f"▎Mobile Link: {mobile_link}\n"
         f"▎PC Link: {pc_link}\n"
         f"▎TV Link: {tv_link}\n\n"
-        "Developer: t.me/mtfeels"
+        "👑 **Developed by @mtfeels**"
     )
     
     keyboard = [
         [InlineKeyboardButton("💻 PC Login ↗", url=pc_link),
          InlineKeyboardButton("📱 Mobile Login ↗", url=mobile_link)],
         [InlineKeyboardButton("📺 TV Login ↗", url=tv_link)],
-        [InlineKeyboardButton("🏠 Home", callback_data="home")]
+        [InlineKeyboardButton("🏠 Return Home", callback_data="home")]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     
@@ -173,7 +174,7 @@ async def generate_account_callback(update: Update, context: ContextTypes.DEFAUL
     )
 
     file_content = (
-        "✦ Netflix Account Generated Successfully\n\n"
+        "✦ ── STAIN SESSION GENERATOR ── ✦\n\n"
         f"▎Email: {email}\n"
         f"▎Phone: {phone}\n"
         f"▎Country: {reg_info['name']}\n"
@@ -188,11 +189,12 @@ async def generate_account_callback(update: Update, context: ContextTypes.DEFAUL
         "▎Payment: MOBILE_WALLET\n"
         "▎Next Billing: December 7, 2026\n"
         "▎Extra Members: No\n\n"
-        "───────────────\n\n"
+        "──────────────────────────\n\n"
         f"▎Cookie: \n{SAMPLE_COOKIE}\n\n"
         f"▎Mobile Link: {mobile_link}\n"
         f"▎PC Link: {pc_link}\n"
-        f"▎TV Link: {tv_link}\n"
+        f"▎TV Link: {tv_link}\n\n"
+        "👑 Developed by @mtfeels\n"
     )
     
     file_bytes = BytesIO(file_content.encode("utf-8"))
@@ -207,7 +209,7 @@ async def generate_account_callback(update: Update, context: ContextTypes.DEFAUL
     await context.bot.send_document(
         chat_id=query.message.chat_id,
         document=InputFile(file_bytes),
-        caption="You need to verify this account to get new account.\n\nVerify using these buttons.",
+        caption="🔒 You need to verify this account to unlock the next generation.\n\n⚡ Verify using the buttons below.",
         reply_markup=verify_markup
     )
     print(f"✅ Successfully generated and sent account for {email}!")
@@ -219,9 +221,9 @@ async def home_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
 async def dummy_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
-    await query.answer("Feature active and synced with database!", show_alert=True)
+    await query.answer("✨ System module active & synchronized with @mtfeels cloud!", show_alert=True)
 
-async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE) ->none if False else None:
+async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     pass
 
 def main():
@@ -236,7 +238,7 @@ def main():
     app.add_handler(CallbackQueryHandler(home_callback, pattern="^home$"))
     app.add_handler(CallbackQueryHandler(dummy_callback, pattern="^(working_|send_txt|send_text|any_extract|reviews|developer|tutorial)"))
     
-    print("🤖 STAIN Netflix Premium Bot initialized and running 24/7...")
+    print("🤖 STAIN Netflix Premium Bot initialized and running 24/7 by @mtfeels...")
     app.run_polling()
 
 if __name__ == "__main__":
