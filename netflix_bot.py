@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# netflix_bot.py - STAIN Netflix Premium Multi-Tool Cloud Bot (Final Edition)
+# netflix_bot.py - STAIN Netflix Premium Multi-Tool Cloud Bot
 import os
 import random
 import logging
@@ -10,17 +10,16 @@ from telegram.ext import Application, CommandHandler, CallbackQueryHandler, Cont
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Bot Token (Loads from Render environment variables or fallback)
-TOKEN = os.getenv("9151185184:AAGbZw6R_hu8SzfokI0C7qlLtNyowcy0n7E", "9151185184:AAGbZw6R_hu8SzfokI0C7qlLtNyowcy0n7E")
+# Hardcoded Bot Token as requested
+TOKEN = "9151185184:AAGbZw6R_hu8SzfokI0C7qlLtNyowcy0n7E"
 
-# Region Stock & Data Matrix
 REGIONS = {
-    "ph": {"name": "Philippines 🇵🇭", "stock": 17, "code": "PH"},
-    "jp": {"name": "Japan 🇯🇵", "stock": 42, "code": "JP"},
-    "kr": {"name": "South Korea 🇰🇷", "stock": 29, "code": "KR"},
-    "us": {"name": "USA 🇺🇸", "stock": 33, "code": "US"},
-    "br": {"name": "Brazil 🇧🇷", "stock": 113, "code": "BR"},
-    "tr": {"name": "Turkey 🇹🇷", "stock": 52, "code": "TR"},
+    "ph": {"name": "Philippines 🇵🇭", "stock": 17},
+    "jp": {"name": "Japan 🇯🇵", "stock": 42},
+    "kr": {"name": "South Korea 🇰🇷", "stock": 29},
+    "us": {"name": "USA 🇺🇸", "stock": 33},
+    "br": {"name": "Brazil 🇧🇷", "stock": 113},
+    "tr": {"name": "Turkey 🇹🇷", "stock": 52},
 }
 
 SAMPLE_EMAILS = [
@@ -210,5 +209,5 @@ def main():
     print("🤖 STAIN Netflix Premium Bot initialized and running 24/7...")
     app.run_polling()
 
-if __name__ == "main__":
+if __name__ == "__main__":
     main()
