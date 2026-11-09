@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# netflix_bot.py - STAIN Netflix Premium Multi-Tool Cloud Bot (Production Edition)
+# netflix_bot.py - STAIN Netflix Premium Multi-Tool Cloud Bot (Fixed Edition)
 import os
 import random
 import time
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 TOKEN = "9151185184:AAGbZw6R_hu8SzfokI0C7qlLtNyowcy0n7E"
 
-# Cooldown dictionary to track user generation timestamps (3 minutes = 180 seconds)
+# Cooldown dictionary (3 minutes = 180 seconds)
 USER_COOLDOWNS = {}
 COOLDOWN_TIME = 180 
 
@@ -63,17 +63,17 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     reply_markup = InlineKeyboardMarkup(keyboard)
     
     welcome_text = (
-        "✨ **—SS Netflix Premium** ✨\n"
+        "✨ —SS Netflix Premium ✨\n"
         "10,187 monthly users\n\n"
-        "✨ **Features:**\n"
+        "✨ Features:\n"
         "→ 🍪 Extract NetflixId, Check & Generate Direct Login from Premium accounts only.\n\n"
-        "📁 **Supported Formats:**\n"
-        "→ Text files (zip,txt,json,rar) by 📎 **Any File extract**\n\n"
-        "⚡ **Quick Commands:**\n"
+        "📁 Supported Formats:\n"
+        "→ Text files (zip,txt,json,rar) by Any File extract\n\n"
+        "⚡ Quick Commands:\n"
         "/start - Restart Bot\n"
         "/cancel - Stop current task\n"
         "/stats - Bot statistics\n\n"
-        "📊 **Bot Stats:**\n"
+        "📊 Bot Stats:\n"
         "→ Available Stock : 740\n"
         "→ 10000+ Active Users\n"
         "→ 99.9% Success Rate\n"
@@ -81,9 +81,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
     
     if update.message:
-        await update.message.reply_text(welcome_text, reply_markup=reply_markup, parse_mode="Markdown")
+        await update.message.reply_text(welcome_text, reply_markup=reply_markup)
     elif update.callback_query:
-        await update.callback_query.message.edit_text(welcome_text, reply_markup=reply_markup, parse_mode="Markdown")
+        await update.callback_query.message.edit_text(welcome_text, reply_markup=reply_markup)
 
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
@@ -103,9 +103,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await query.message.edit_text(
-            "🌐 **Select a Country to Generate Netflix Account:**\n*Page: 1/1*", 
-            reply_markup=reply_markup, 
-            parse_mode="Markdown"
+            "🌐 Select a Country to Generate Netflix Account:\nPage: 1/1", 
+            reply_markup=reply_markup
         )
 
     elif data.startswith("gen_"):
@@ -135,26 +134,26 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         tv_link = f"https://www.netflix.com/tv9?nftoken={token_hash}"
 
         result_text = (
-            "✦ **Netflix Account Generated Successfully**\n\n"
-            f"▎**Email:** `{email}`\n"
-            f"▎**Phone:** `{phone}`\n"
-            f"▎**Country:** {reg_info['name']}\n"
-            f"▎**Plan:** Premium\n"
-            f"▎**Ad Plan:** No ✅\n"
-            f"▎**Quality:** UHD\n"
-            f"▎**Max Streams:** 4\n\n"
-            f"▎**Profiles (5):** onyon, Fuck zuya, Xiangelo, Zen, lady\n\n"
-            f"▎**Status:** CURRENT_MEMBER\n"
-            f"▎**On Hold:** No ✅\n"
-            f"▎**Member Since:** Jul 2025\n"
-            f"▎**Payment:** MOBILE_WALLET\n"
-            f"▎**Next Billing:** December 7, 2026\n"
-            f"▎**Extra Members:** No\n\n"
+            "✦ Netflix Account Generated Successfully\n\n"
+            f"▎Email: {email}\n"
+            f"▎Phone: {phone}\n"
+            f"▎Country: {reg_info['name']}\n"
+            f"▎Plan: Premium\n"
+            f"▎Ad Plan: No ✅\n"
+            f"▎Quality: UHD\n"
+            f"▎Max Streams: 4\n\n"
+            "▎Profiles (5): onyon, Fuck zuya, Xiangelo, Zen, lady\n\n"
+            "▎Status: CURRENT_MEMBER\n"
+            "▎On Hold: No ✅\n"
+            "▎Member Since: Jul 2025\n"
+            "▎Payment: MOBILE_WALLET\n"
+            "▎Next Billing: December 7, 2026\n"
+            "▎Extra Members: No\n\n"
             "───────────────\n\n"
-            f"▎**Cookie:**\n`{SAMPLE_COOKIE}`\n\n"
-            f"▎**Mobile Link:** {mobile_link}\n"
-            f"▎**PC Link:** {pc_link}\n"
-            f"▎**TV Link:** {tv_link}\n\n"
+            f"▎Cookie:\n{SAMPLE_COOKIE}\n\n"
+            f"▎Mobile Link: {mobile_link}\n"
+            f"▎PC Link: {pc_link}\n"
+            f"▎TV Link: {tv_link}\n\n"
             "Developer: t.me/FuturePrimeMinister"
         )
         
@@ -166,8 +165,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         
-        # Edit message with full details and direct clickable URLs
-        await query.message.edit_text(result_text, reply_markup=reply_markup, parse_mode="Markdown", disable_web_page_preview=True)
+        # Edit message cleanly without Markdown formatting crashes
+        await query.message.edit_text(result_text, reply_markup=reply_markup, disable_web_page_preview=True)
 
         # Prepare and send the .txt file attachment with verification buttons
         file_content = (
@@ -207,7 +206,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             document=InputFile(file_bytes),
             caption=(
                 "You need to verify this account to get new account.\n\n"
-                "Verfy using this buttons."
+                "Verify using these buttons."
             ),
             reply_markup=verify_markup
         )
@@ -222,7 +221,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await query.answer("Feature active and synced with database!", show_alert=True)
 
 async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("📊 **Bot Stats:**\n→ Available Stock : 740\n→ 10000+ Active Users\n→ 99.9% Success Rate", parse_mode="Markdown")
+    await update.message.reply_text("📊 Bot Stats:\n→ Available Stock : 740\n→ 10000+ Active Users\n→ 99.9% Success Rate")
 
 def main():
     app = Application.builder().token(TOKEN).build()
