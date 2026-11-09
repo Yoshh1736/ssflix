@@ -1,7 +1,8 @@
-#!/usr/init/env python3
-# netflix_bot.py - STAIN Netflix Premium Multi-Tool Cloud Bot (Exact Match Edition)
+#!/usr/bin/env python3
+# netflix_bot.py - STAIN Netflix Premium Multi-Tool Cloud Bot (Production Edition)
 import os
 import random
+import time
 import logging
 from io import BytesIO
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, InputFile
@@ -12,6 +13,10 @@ logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 TOKEN = "9151185184:AAGbZw6R_hu8SzfokI0C7qlLtNyowcy0n7E"
+
+# Cooldown dictionary to track user generation timestamps (3 minutes = 180 seconds)
+USER_COOLDOWNS = {}
+COOLDOWN_TIME = 180 
 
 REGIONS = {
     "ph": {"name": "Philippines 🇵🇭", "stock": 17},
@@ -82,6 +87,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
+    user_id = query.from_user.id
     await query.answer()
     data = query.data
 
@@ -103,42 +109,90 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         )
 
     elif data.startswith("gen_"):
+        # Check cooldown (3 minutes limit)
+        current_time = time.time()
+        last_gen_time = USER_COOLDOWNS.get(user_id, 0)
+        time_diff = current_time - last_gen_time
+
+        if time_diff < COOLDOWN_TIME:
+            remaining = int(COOLDOWN_TIME - time_diff)
+            mins = remaining // 60
+            secs = remaining % 60
+            await query.answer(f"⏳ Cooldown active! Please wait {mins}m {secs}s before generating another account.", show_alert=True)
+            return
+
+        # Update user's last generation timestamp
+        USER_COOLDOWNS[user_id] = current_time
+
         reg_code = data.split("_")[1]
         reg_info = REGIONS.get(reg_code, REGIONS["ph"])
         email = random.choice(SAMPLE_EMAILS)
         phone = f"+6309{random.randint(10000000, 99999999)}"
         
+        token_hash = f"BgjkwevcAxLCAcp1m9DTyzISpi0j2VCpwq8+hIQ5+{random.randint(100,999)}wyzNuToxAcVXDK893gbHz436kgYSMzgn/g1rdkj0QRZ73C9SZo0Ik3Apj7KK5Adjbbj9AB1GR8Oe0vti2OCNS6TNI11+51rOjqDy7obVlrVQtty6j+Sz/MSPRReEKr3bVAl7emFzgpBg0yjWxbL9hYUfWCCeIVueQVbttH52kiXViDxqNtXTiHO5T3cuZMrfHRgO8mpJdcnta20DgO496gLv8BWl+NEoOsXl6iGAYiDgoM8gsPtUQc3Qa5TUWo"
+        mobile_link = f"https://www.netflix.com/unsupported?nftoken={token_hash}"
+        pc_link = f"https://www.netflix.com/browse?nftoken={token_hash}"
+        tv_link = f"https://www.netflix.com/tv9?nftoken={token_hash}"
+
         result_text = (
-            "✅ **Netflix Account Generated Successfully !**\n\n"
-            f"📧 **Email:** `{email}` (Yes ✅)\n"
-            f"📞 **Phone:** `{phone}` (Yes ✅)\n"
-            f"🌍 **Country:** {reg_info['name']}\n"
-            f"🎬 **Plan:** Premium (Ad Plan: No ✅)\n"
-            f"📺 **Quality:** UHD\n"
-            f"👥 **Max Streams:** 4\n"
-            f"👥 **Profiles (5):** onyon, Fuck zuya, Xiangelo, Zen, lady\n"
-            f"🟢 **Status:** CURRENT_MEMBER (On Hold: No ✅)\n"
-            f"📅 **Member Since:** Jul 2025\n"
-            f"💳 **Payment:** MOBILE_WALLET\n"
-            f"⏳ **Next Billing:** December 7, 2026\n"
-            f"➕ **Extra Members:** No\n\n"
-            f"🍪 **Cookie:** `{SAMPLE_COOKIE}`\n\n"
+            "✦ **Netflix Account Generated Successfully**\n\n"
+            f"▎**Email:** `{email}`\n"
+            f"▎**Phone:** `{phone}`\n"
+            f"▎**Country:** {reg_info['name']}\n"
+            f"▎**Plan:** Premium\n"
+            f"▎**Ad Plan:** No ✅\n"
+            f"▎**Quality:** UHD\n"
+            f"▎**Max Streams:** 4\n\n"
+            f"▎**Profiles (5):** onyon, Fuck zuya, Xiangelo, Zen, lady\n\n"
+            f"▎**Status:** CURRENT_MEMBER\n"
+            f"▎**On Hold:** No ✅\n"
+            f"▎**Member Since:** Jul 2025\n"
+            f"▎**Payment:** MOBILE_WALLET\n"
+            f"▎**Next Billing:** December 7, 2026\n"
+            f"▎**Extra Members:** No\n\n"
+            "───────────────\n\n"
+            f"▎**Cookie:**\n`{SAMPLE_COOKIE}`\n\n"
+            f"▎**Mobile Link:** {mobile_link}\n"
+            f"▎**PC Link:** {pc_link}\n"
+            f"▎**TV Link:** {tv_link}\n\n"
             "Developer: t.me/FuturePrimeMinister"
         )
         
         keyboard = [
-            [InlineKeyboardButton("💻 PC Login ↗", callback_data=f"login_pc_{reg_code}"),
-             InlineKeyboardButton("📱 Mobile Login ↗", callback_data=f"login_mob_{reg_code}")],
-            [InlineKeyboardButton("📺 TV Login ↗", callback_data=f"login_tv_{reg_code}")],
+            [InlineKeyboardButton("💻 PC Login ↗", url=pc_link),
+             InlineKeyboardButton("📱 Mobile Login ↗", url=mobile_link)],
+            [InlineKeyboardButton("📺 TV Login ↗", url=tv_link)],
             [InlineKeyboardButton("🏠 Home", callback_data="home")]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         
-        # Edit the message to show the generated account details
-        await query.message.edit_text(result_text, reply_markup=reply_markup, parse_mode="Markdown")
+        # Edit message with full details and direct clickable URLs
+        await query.message.edit_text(result_text, reply_markup=reply_markup, parse_mode="Markdown", disable_web_page_preview=True)
 
-        # Also send the .txt file and verification buttons like the reference screenshot
-        file_content = f"Email: {email}\nPhone: {phone}\nCountry: {reg_info['name']}\nCookie: {SAMPLE_COOKIE}\n"
+        # Prepare and send the .txt file attachment with verification buttons
+        file_content = (
+            "✦ Netflix Account Generated Successfully\n\n"
+            f"▎Email: {email}\n"
+            f"▎Phone: {phone}\n"
+            f"▎Country: {reg_info['name']}\n"
+            f"▎Plan: Premium\n"
+            f"▎Ad Plan: No ✅\n"
+            f"▎Quality: UHD\n"
+            f"▎Max Streams: 4\n\n"
+            "▎Profiles (5): onyon, Fuck zuya, Xiangelo, Zen, lady\n\n"
+            "▎Status: CURRENT_MEMBER\n"
+            "▎On Hold: No ✅\n"
+            "▎Member Since: Jul 2025\n"
+            "▎Payment: MOBILE_WALLET\n"
+            "▎Next Billing: December 7, 2026\n"
+            "▎Extra Members: No\n\n"
+            "───────────────\n\n"
+            f"▎Cookie: \n{SAMPLE_COOKIE}\n\n"
+            f"▎Mobile Link: {mobile_link}\n"
+            f"▎PC Link: {pc_link}\n"
+            f"▎TV Link: {tv_link}\n"
+        )
+        
         file_bytes = BytesIO(file_content.encode("utf-8"))
         file_bytes.name = f"{email}.txt"
 
@@ -157,50 +211,6 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             ),
             reply_markup=verify_markup
         )
-
-    elif data.startswith("login_"):
-        parts = data.split("_")
-        device_type = parts[1]
-        reg_code = parts[2]
-        base_urls = {
-            "ph": "https://www.netflix.com/ph/",
-            "jp": "https://www.netflix.com/jp/",
-            "kr": "https://www.netflix.com/kr/",
-            "us": "https://www.netflix.com/",
-            "br": "https://www.netflix.com/br/",
-            "tr": "https://www.netflix.com/tr/"
-        }
-        url = base_urls.get(reg_code, "https://www.netflix.com/")
-        
-        if device_type == "pc":
-            msg = (
-                "💻 **PC / Laptop Login Instructions:**\n\n"
-                "1. Install browser extension **'EditThisCookie'** or **'Cookie-Editor'**.\n"
-                f"2. Go to [{url}]({url})\n"
-                "3. Import or set Cookie Name: `NetflixId` with the generated cookie value.\n"
-                "4. Refresh the page to access premium session instantly."
-            )
-        elif device_type == "mob":
-            msg = (
-                "📱 **Mobile / Tablet Login Instructions:**\n\n"
-                "1. Open mobile browser or Netflix app.\n"
-                f"2. Session payload synced for region `{reg_code.upper()}`.\n"
-                f"3. Direct authentication link: [{url}browse]({url}browse)"
-            )
-        else:
-            pin = f"{random.randint(10,99)}-{random.randint(10,99)}"
-            msg = (
-                "📺 **Smart TV / Console Login Instructions:**\n\n"
-                "1. Open Netflix on your TV and go to Sign In on Web.\n"
-                f"2. Visit [{url}tv]({url}tv)\n"
-                f"3. Enter pairing PIN: **{pin}**"
-            )
-            
-        keyboard = [
-            [InlineKeyboardButton("🏠 Home", callback_data="home")]
-        ]
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        await query.message.reply_text(msg, reply_markup=reply_markup, parse_mode="Markdown", disable_web_page_preview=True)
 
     elif data == "home":
         await start(update, context)
