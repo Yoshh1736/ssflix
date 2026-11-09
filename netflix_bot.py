@@ -71,7 +71,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "→ Available Stock : `740 Sessions`\n"
         "→ Success Rate : `99.9%`\n"
         "──────────────────────────\n"
-        "👑 *Developed by @FuturePrimeMinister*"
+        "👑 *Developed by @mtfeels*"
     )
     
     if update.message:
