@@ -77,7 +77,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "→ Available Stock : 740\n"
         "→ 10000+ Active Users\n"
         "→ 99.9% Success Rate\n"
-        "Developed by @FuturePrimeMinister"
+        "Developed by @mtfeels"
     )
     
     if update.message:
@@ -154,7 +154,7 @@ async def generate_account_callback(update: Update, context: ContextTypes.DEFAUL
         f"▎Mobile Link: {mobile_link}\n"
         f"▎PC Link: {pc_link}\n"
         f"▎TV Link: {tv_link}\n\n"
-        "Developer: t.me/FuturePrimeMinister"
+        "Developer: t.me/mtfeels"
     )
     
     keyboard = [
