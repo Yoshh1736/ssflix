@@ -1,20 +1,19 @@
 #!/usr/bin/env python3
-# netflix_bot.py - STAIN Netflix Premium Multi-Tool Cloud Bot (Direct Handler Edition)
+# netflix_bot.py - STAIN Netflix Premium Multi-Tool Cloud Bot (Diagnostic Edition)
 import os
 import random
 import time
 import logging
 from io import BytesIO
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, InputFile
-from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes, MessageHandler, filters
+from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 
-# Enable logging
+# Enable full logging
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 TOKEN = "9151185184:AAGbZw6R_hu8SzfokI0C7qlLtNyowcy0n7E"
 
-# Cooldown dictionary (3 minutes = 180 seconds)
 USER_COOLDOWNS = {}
 COOLDOWN_TIME = 180 
 
@@ -51,6 +50,7 @@ SAMPLE_COOKIE = (
 )
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    print("📥 /start command received!")
     keyboard = [
         [InlineKeyboardButton("🎬 Generate Now", callback_data="menu_regions")],
         [InlineKeyboardButton("📂 Send file(txt)", callback_data="send_txt"),
@@ -86,6 +86,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await update.callback_query.message.reply_text(welcome_text, reply_markup=reply_markup)
 
 async def menu_regions_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    print("👉 'Generate Now' button clicked!")
     query = update.callback_query
     await query.answer()
     
@@ -106,23 +107,20 @@ async def menu_regions_callback(update: Update, context: ContextTypes.DEFAULT_TY
 
 async def generate_account_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
+    print(f"🔥 COUNTRY BUTTON CLICKED: {query.data}")
+    
     user_id = query.from_user.id
     await query.answer()
     data = query.data
 
-    # Check cooldown (3 minutes limit)
+    # Check cooldown
     current_time = time.time()
     last_gen_time = USER_COOLDOWNS.get(user_id, 0)
-    time_diff = current_time - last_gen_time
-
-    if time_diff < COOLDOWN_TIME:
-        remaining = int(COOLDOWN_TIME - time_diff)
-        mins = remaining // 60
-        secs = remaining % 60
-        await query.answer(f"⏳ Cooldown active! Please wait {mins}m {secs}s before generating another account.", show_alert=True)
+    if (current_time - last_gen_time) < COOLDOWN_TIME:
+        remaining = int(COOLDOWN_TIME - (current_time - last_gen_time))
+        await query.answer(f"⏳ Cooldown active! Wait {remaining // 60}m {remaining % 60}s.", show_alert=True)
         return
 
-    # Update user's last generation timestamp
     USER_COOLDOWNS[user_id] = current_time
 
     reg_code = data.split("_")[1]
@@ -167,7 +165,6 @@ async def generate_account_callback(update: Update, context: ContextTypes.DEFAUL
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     
-    # Send generated card as brand new message
     await context.bot.send_message(
         chat_id=query.message.chat_id,
         text=result_text,
@@ -175,7 +172,6 @@ async def generate_account_callback(update: Update, context: ContextTypes.DEFAUL
         disable_web_page_preview=True
     )
 
-    # Send .txt file attachment with verification buttons
     file_content = (
         "✦ Netflix Account Generated Successfully\n\n"
         f"▎Email: {email}\n"
@@ -211,12 +207,10 @@ async def generate_account_callback(update: Update, context: ContextTypes.DEFAUL
     await context.bot.send_document(
         chat_id=query.message.chat_id,
         document=InputFile(file_bytes),
-        caption=(
-            "You need to verify this account to get new account.\n\n"
-            "Verify using these buttons."
-        ),
+        caption="You need to verify this account to get new account.\n\nVerify using these buttons.",
         reply_markup=verify_markup
     )
+    print(f"✅ Successfully generated and sent account for {email}!")
 
 async def home_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
@@ -227,16 +221,16 @@ async def dummy_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     query = update.callback_query
     await query.answer("Feature active and synced with database!", show_alert=True)
 
-async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("📊 Bot Stats:\n→ Available Stock : 740\n→ 10000+ Active Users\n→ 99.9% Success Rate")
+async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE) ->none if False else None:
+    pass
 
 def main():
     app = Application.builder().token(TOKEN).build()
     
+    # Drop any leftover webhooks so polling works cleanly
+    app.bot.delete_webhook(drop_pending_updates=True)
+
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("stats", stats))
-    
-    # Specific handlers for each button action
     app.add_handler(CallbackQueryHandler(menu_regions_callback, pattern="^menu_regions$"))
     app.add_handler(CallbackQueryHandler(generate_account_callback, pattern="^gen_"))
     app.add_handler(CallbackQueryHandler(home_callback, pattern="^home$"))
